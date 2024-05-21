@@ -785,3 +785,7 @@ if (file_exists(__DIR__ . '/settings.ddev.php') && getenv('IS_DDEV_PROJECT') == 
 # Config override for CSS and JS aggregation:
 # $config['system.performance']['js']['preprocess'] = FALSE;
 # $config['system.performance']['css']['preprocess'] = FALSE;
+
+# Enable dev split in local environments by including the following line in settings.ddev.php
+# or adding a conditional to check for the environment.
+# $config["config_split.config_split.dev"]["status"] = TRUE;
