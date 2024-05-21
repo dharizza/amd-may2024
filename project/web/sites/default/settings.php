@@ -261,7 +261,7 @@ $databases = [];
  * directory in the public files path. The setting below allows you to set
  * its location.
  */
-$settings['config_sync_directory'] = '../config';
+$settings['config_sync_directory'] = '../config/sync';
 
 /**
  * Settings:
@@ -778,3 +778,14 @@ if (file_exists(__DIR__ . '/settings.ddev.php') && getenv('IS_DDEV_PROJECT') == 
 # if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
 #   include $app_root . '/' . $site_path . '/settings.local.php';
 # }
+
+# Override configuration properties.
+# Config override for error level:
+# $config['system.logging']['error_level'] = 'verbose';
+# Config override for CSS and JS aggregation:
+# $config['system.performance']['js']['preprocess'] = FALSE;
+# $config['system.performance']['css']['preprocess'] = FALSE;
+
+# Enable dev split in local environments by including the following line in settings.ddev.php
+# or adding a conditional to check for the environment.
+# $config["config_split.config_split.dev"]["status"] = TRUE;
