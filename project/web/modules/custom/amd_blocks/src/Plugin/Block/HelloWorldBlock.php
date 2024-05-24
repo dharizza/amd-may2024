@@ -25,8 +25,11 @@ final class HelloWorldBlock extends BlockBase {
     // For using current user.
     $user = \Drupal::currentUser()->getAccountName();
 
+    // Using Drupal\user\Entity\User::load or ::loadMultiple
+    $another = User::load(2)->getAccountName();
+
     $build['content'] = [
-      '#markup' => $this->t('Hello @username! Say hi to @another', ['@username' => $user]),
+      '#markup' => $this->t('Hello @username! Say hi to @another', ['@username' => $user, '@another' => $another]),
     ];
 
     return $build;
