@@ -1,0 +1,11 @@
+deletion_record.type_add:
+  title: 'Add deletion record type'
+  route_name: entity.deletion_record_type.add_form
+  appears_on:
+    - entity.deletion_record_type.collection
+
+deletion_record.add_page:
+  title: 'Add deletion record'
+  route_name: entity.deletion_record.add_page
+  appears_on:
+    - entity.deletion_record.collection

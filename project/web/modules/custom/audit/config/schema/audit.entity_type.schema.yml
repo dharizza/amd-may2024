@@ -1,0 +1,12 @@
+audit.deletion_record_type.*:
+  type: config_entity
+  label: 'Deletion Record type config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    uuid:
+      type: string
