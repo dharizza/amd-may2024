@@ -104,6 +104,78 @@ final class DeletionRecord extends ContentEntityBase implements DeletionRecordIn
       ->setLabel(t('Changed'))
       ->setDescription(t('The time that the deletion record was last edited.'));
 
+    $fields['deleted'] = BaseFieldDefinition::create('timestamp')
+      ->setLabel(t('Deletion time'))
+      ->setDescription(t('Timestamp of when the entity was deleted.'));
+
+    $fields['entity_author'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Deleted entity author'))
+      ->setDescription(t('The UID of the deleted entity author.'))
+      ->setSetting('target_type', 'user')
+      ->setRevisionable(TRUE)
+      ->setDisplayOptions('view', [
+        'label' => 'hidden',
+        'type' => 'author',
+        'weight' => 0,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'entity_reference_autocomplete',
+        'weight' => 5,
+        'settings' => [
+          'match_operator' => 'CONTAINS',
+          'size' => '60',
+          'placeholder' => '',
+        ],
+      ])
+      ->setDisplayConfigurable('form', TRUE);
+
+    $fields['deleted_by'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Deleted by'))
+      ->setDescription(t('The UID of the user who deleted the entity.'))
+      ->setSetting('target_type', 'user')
+      ->setRevisionable(TRUE)
+      ->setDisplayOptions('view', [
+        'label' => 'hidden',
+        'type' => 'author',
+        'weight' => 0,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'entity_reference_autocomplete',
+        'weight' => 5,
+        'settings' => [
+          'match_operator' => 'CONTAINS',
+          'size' => '60',
+          'placeholder' => '',
+        ],
+      ])
+      ->setDisplayConfigurable('form', TRUE);
+
+    $fields['entity_type'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Entity type'))
+      ->setDisplayOptions('form', [
+        'type' => 'string_textfield',
+        'weight' => -5,
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayOptions('view', [
+        'label' => 'hidden',
+        'type' => 'string',
+        'weight' => -5,
+      ]);
+
+    $fields['bundle'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Bundle'))
+      ->setDisplayOptions('form', [
+        'type' => 'string_textfield',
+        'weight' => -5,
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayOptions('view', [
+        'label' => 'hidden',
+        'type' => 'string',
+        'weight' => -5,
+      ]);
+
     return $fields;
   }
 
