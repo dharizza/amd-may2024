@@ -32,6 +32,21 @@ final class HelloWorldBlock extends BlockBase {
       '#markup' => $this->t('Hello @username! Say hi to @another', ['@username' => $user, '@another' => $another]),
     ];
 
+    // Using entity type manager
+    $entityTypeManager = \Drupal::entityTypeManager();
+    $storage = $entityTypeManager->getStorage('user');
+    $user = $storage->load(2); // Return Drupal\user\Entity\User
+    $username = $user->getAccountName();
+    ksm($username);
+
+    $username = \Drupal::entityTypeManager()->getStorage('user')->load(2)->getAccountName();
+    ksm($username);
+
+    // Load a node.
+    $nodeStorage = $entityTypeManager->getStorage('node');
+    $node = $nodeStorage->load(1);
+    ksm($node);
+    
     return $build;
   }
 
