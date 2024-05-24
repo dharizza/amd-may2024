@@ -22,6 +22,7 @@
         "drupal/core-project-message": "^10.2",
         "drupal/core-recommended": "^10.2",
         "drupal/devel": "^5.2",
+        "drupal/hook_event_dispatcher": "^4.0",
         "drush/drush": "^12.5"
     },
     "require-dev": {
