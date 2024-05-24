@@ -24,12 +24,13 @@ final class HelloWorldBlock extends BlockBase {
   public function build(): array {
     // For using current user.
     $user = \Drupal::currentUser()->getAccountName();
+    $textTransformer = \Drupal::service('text_transformer');
 
     // Using Drupal\user\Entity\User::load or ::loadMultiple
     $another = User::load(2)->getAccountName();
 
     $build['content'] = [
-      '#markup' => $this->t('Hello @username! Say hi to @another', ['@username' => $user, '@another' => $another]),
+      '#markup' => $this->t('Hello @username! Say hi to @another', ['@username' => $textTransformer->titleCase($user), '@another' => $another]),
     ];
 
     // Using entity type manager
