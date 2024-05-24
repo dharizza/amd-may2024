@@ -1,0 +1,11 @@
+entity.deletion_record_type.collection:
+  title: 'Deletion Record types'
+  description: 'Manage and CRUD actions on Deletion Record type.'
+  parent: system.admin_structure
+  route_name: entity.deletion_record_type.collection
+
+entity.deletion_record.collection:
+  title: 'Deletion Records'
+  description: 'List of deletion records.'
+  route_name: entity.deletion_record.collection
+  parent: system.admin_content

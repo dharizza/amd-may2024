@@ -1,0 +1,4 @@
+administer deletion_record types:
+  title: 'Administer deletion record types'
+  description: 'Maintain the types of deletion record entity.'
+  restrict access: true
