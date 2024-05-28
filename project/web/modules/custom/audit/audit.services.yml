@@ -1,0 +1,5 @@
+services:
+  audit.entity_deletion_subscriber:
+    class: Drupal\audit\EventSubscriber\EntityDeletionSubscriber
+    tags:
+      - { name: event_subscriber }
