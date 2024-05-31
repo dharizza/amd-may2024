@@ -6,13 +6,45 @@ namespace Drupal\audit\Form;
 
 use Drupal\audit\Event\IncidentReport;
 use Drupal\audit\Event\IncidentReportEvents;
+use \Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
  * Provides a audit form.
  */
 final class IncidentReportForm extends FormBase {
+
+  /**
+   * Instance of entityTypeManager service.
+   * 
+   * @var Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * The event dispatcher service.
+   * 
+   * @var Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher 
+   */
+  protected $eventDispatcher;
+
+  /**
+   * Constructs an IncidentReportForm.
+   */
+  public function __construct(ContainerAwareEventDispatcher $eventDispatcher, EntityTypeManagerInterface $entityTypeManager) {
+    $this->eventDispatcher = $eventDispatcher;
+    $this->entityTypeManager = $entityTypeManager;
+  }
+
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('event_dispatcher'),
+      $container->get('entity_type.manager')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -66,7 +98,9 @@ final class IncidentReportForm extends FormBase {
   }
 
   public function getEntities() {
-    $storage = \Drupal::entityTypeManager()->getStorage('deletion_record');
+    // $storage = \Drupal::entityTypeManager()->getStorage('deletion_record');
+    // With DI:
+    $storage = $this->entityTypeManager->getStorage('deletion_record');
     $query = $storage->getQuery();
     $query->sort('deleted', 'DESC');
     $query->accessCheck(TRUE);
@@ -108,7 +142,9 @@ final class IncidentReportForm extends FormBase {
     $report = $form_state->getValue('report');
     // Trigger the event.
     $event = new IncidentReport($reporter_name, $reporter_email, $entity, $report);
-    \Drupal::service('event_dispatcher')->dispatch($event, IncidentReportEvents::NEW_INCIDENT);
+    // \Drupal::service('event_dispatcher')->dispatch($event, IncidentReportEvents::NEW_INCIDENT);
+    // With DI:
+    $this->eventDispatcher->dispatch($event, IncidentReportEvents::NEW_INCIDENT);
 
     $this->messenger()->addStatus($this->t('The message has been sent.'));
     $form_state->setRedirect('<front>');
