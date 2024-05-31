@@ -7,14 +7,33 @@ namespace Drupal\audit\EventSubscriber;
 use Drupal\audit\Event\IncidentReport;
 use Drupal\audit\Event\IncidentReportEvents;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\core_event_dispatcher\EntityHookEvents;
 use Drupal\core_event_dispatcher\Event\Entity\EntityDeleteEvent;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * @todo Add description for this subscriber.
  */
 final class EntityDeletionSubscriber implements EventSubscriberInterface {
+
+  /**
+   * Logger Factory.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
+   */
+  protected $logger;
+
+  public function __construct(LoggerChannelFactoryInterface $loggerFactory) {
+    $this->logger = $loggerFactory->get('audit');
+  }
+
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('logger.factory')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -74,9 +93,11 @@ final class EntityDeletionSubscriber implements EventSubscriberInterface {
     $report = $event->getReport();
 
     // Log the information in watchdog.
-    $logger_factory = \Drupal::service('logger.factory');
-    $logger = $logger_factory->get('audit');
-    $logger->alert('New incident reported by ' . $reporter . ' (' . $email . ') on entity ' . $entity . '. Details: ' . $report . ' !');
+    // $logger_factory = \Drupal::service('logger.factory');
+    // $logger = $logger_factory->get('audit');
+    // $logger->alert('New incident reported by ' . $reporter . ' (' . $email . ') on entity ' . $entity . '. Details: ' . $report . ' !');
+    // Using DI:
+    $this->logger->alert('New incident reported by ' . $reporter . ' (' . $email . ') on entity ' . $entity . '. Details: ' . $report . ' !');
     
     $event->stopPropagation();
   }
