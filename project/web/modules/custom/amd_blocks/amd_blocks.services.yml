@@ -1,4 +1,4 @@
 services:
   text_transformer:
     class: Drupal\amd_blocks\TransformText
-    arguments: []
+    arguments: ['@logger.factory']

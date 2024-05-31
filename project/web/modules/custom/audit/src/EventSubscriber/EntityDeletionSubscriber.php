@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Drupal\audit\EventSubscriber;
 
+use Drupal\audit\Event\IncidentReport;
+use Drupal\audit\Event\IncidentReportEvents;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\core_event_dispatcher\EntityHookEvents;
 use Drupal\core_event_dispatcher\Event\Entity\EntityDeleteEvent;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -15,10 +19,28 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 final class EntityDeletionSubscriber implements EventSubscriberInterface {
 
   /**
+   * Logger Factory.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
+   */
+  protected $logger;
+
+  public function __construct(LoggerChannelFactoryInterface $loggerFactory) {
+    $this->logger = $loggerFactory->get('audit');
+  }
+
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('logger.factory')
+    );
+  }
+
+  /**
    * {@inheritdoc}
    */
   public static function getSubscribedEvents(): array {
     $events[EntityHookEvents::ENTITY_DELETE][] = ['logDeletion'];
+    $events[IncidentReportEvents::NEW_INCIDENT] = ['logError'];
 
     return $events;
   }
@@ -59,6 +81,25 @@ final class EntityDeletionSubscriber implements EventSubscriberInterface {
 
     $record = \Drupal::entityTypeManager()->getStorage('deletion_record')->create($data);
     $record->save();
+  }
+
+  /**
+   * Reacts to new incidents.
+   */
+  public function logError(IncidentReport $event) {
+    $reporter = $event->getReporterName();
+    $email = $event->getReporterEmail();
+    $entity = $event->getDeletedEntity();
+    $report = $event->getReport();
+
+    // Log the information in watchdog.
+    // $logger_factory = \Drupal::service('logger.factory');
+    // $logger = $logger_factory->get('audit');
+    // $logger->alert('New incident reported by ' . $reporter . ' (' . $email . ') on entity ' . $entity . '. Details: ' . $report . ' !');
+    // Using DI:
+    $this->logger->alert('New incident reported by ' . $reporter . ' (' . $email . ') on entity ' . $entity . '. Details: ' . $report . ' !');
+    
+    $event->stopPropagation();
   }
 
 }
