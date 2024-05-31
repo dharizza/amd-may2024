@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\audit\EventSubscriber;
 
+use Drupal\audit\Event\IncidentReport;
+use Drupal\audit\Event\IncidentReportEvents;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\core_event_dispatcher\EntityHookEvents;
 use Drupal\core_event_dispatcher\Event\Entity\EntityDeleteEvent;
@@ -19,6 +21,7 @@ final class EntityDeletionSubscriber implements EventSubscriberInterface {
    */
   public static function getSubscribedEvents(): array {
     $events[EntityHookEvents::ENTITY_DELETE][] = ['logDeletion'];
+    $events[IncidentReportEvents::NEW_INCIDENT] = ['logError'];
 
     return $events;
   }
@@ -59,6 +62,23 @@ final class EntityDeletionSubscriber implements EventSubscriberInterface {
 
     $record = \Drupal::entityTypeManager()->getStorage('deletion_record')->create($data);
     $record->save();
+  }
+
+  /**
+   * Reacts to new incidents.
+   */
+  public function logError(IncidentReport $event) {
+    $reporter = $event->getReporterName();
+    $email = $event->getReporterEmail();
+    $entity = $event->getDeletedEntity();
+    $report = $event->getReport();
+
+    // Log the information in watchdog.
+    $logger_factory = \Drupal::service('logger.factory');
+    $logger = $logger_factory->get('audit');
+    $logger->alert('New incident reported by ' . $reporter . ' (' . $email . ') on entity ' . $entity . '. Details: ' . $report . ' !');
+    
+    $event->stopPropagation();
   }
 
 }
