@@ -23,6 +23,9 @@
         "drupal/core-recommended": "^10.2",
         "drupal/devel": "^5.2",
         "drupal/hook_event_dispatcher": "^4.0",
+        "drupal/migrate_plus": "^6.0",
+        "drupal/migrate_source_csv": "^3.6",
+        "drupal/migrate_tools": "^6.0",
         "drush/drush": "^12.5"
     },
     "require-dev": {

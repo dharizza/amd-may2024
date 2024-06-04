@@ -1,0 +1,49 @@
+id: articles
+label: Articles
+migration_tags:
+  - node
+  - articles
+migration_group: content
+source:
+  plugin: csv
+  path: modules/custom/amd_migrate/data/articles.csv
+  delimiter: ','
+  enclosure: '"'
+  header_offset: 0
+  ids:
+    - id
+  fields:
+    -
+      name: id
+      label: ID
+    -
+      name: bundle
+      label: Bundle
+    -
+      name: title
+      label: Title
+    -
+      name: body
+      label: Body
+
+process:
+  title: title
+  type:
+    plugin: default_value
+    default_value: 'article'
+  body/value: body
+  status:
+    plugin: default_value
+    default_value: 1
+  field_tags:
+    -
+      plugin: extract_animal
+      source: body
+    -
+      plugin: skip_on_empty
+      method: process
+    -
+      plugin: entity_generate
+
+destination:
+  plugin: 'entity:node'
